@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rolex0014/Task-2.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy'){
+            steps {
+                sshagent(['8baf7650-cef8-448d-bbb7-5f7e5bb82751']) {
+                    sh 'scp -o StrictHostKeyChecking=no target/*.war ec2-user@3.80.216.140  :/home/ec2-user/apache-tomcat-9.0.105/webapps/'
+                }       
+            }
+        }
+    }
+}
